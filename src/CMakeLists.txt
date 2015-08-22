@@ -145,6 +145,30 @@ find_package(Lua REQUIRED)
 
 find_package(GMP REQUIRED)
 
+OPTION(ENABLE_POSTGRESQL "Enable PostgreSQL backend" FALSE)
+set(USE_POSTGRESQL FALSE)
+
+if(ENABLE_POSTGRESQL)
+	find_program(PG_CONFIG_EXECUTABLE pg_config DOC "pg_config")
+	if(PG_CONFIG_EXECUTABLE)
+		execute_process(COMMAND ${PG_CONFIG_EXECUTABLE} --includedir-server
+			OUTPUT_VARIABLE PostgreSQL_SERVER_INCLUDE_DIRS
+			OUTPUT_STRIP_TRAILING_WHITESPACE)
+		set(PostgreSQL_ADDITIONAL_SEARCH_PATHS ${PostgreSQL_SERVER_INCLUDE_DIRS})
+	endif()
+
+	find_package("PostgreSQL")
+
+	if(PostgreSQL_FOUND)
+		set(USE_POSTGRESQL TRUE)
+		message(STATUS "PostgreSQL backend enabled")
+		include_directories(${PostgreSQL_INCLUDE_DIR})
+        else()
+                message(STATUS "PostgreSQL not found!")
+        endif()
+endif(ENABLE_POSTGRESQL)
+
+
 option(ENABLE_LEVELDB "Enable LevelDB backend" TRUE)
 set(USE_LEVELDB FALSE)
 
@@ -317,6 +341,7 @@ set(common_SRCS
 	craftdef.cpp
 	database-dummy.cpp
 	database-leveldb.cpp
+	database-postgresql.cpp
 	database-redis.cpp
 	database-sqlite3.cpp
 	database.cpp
@@ -577,6 +602,9 @@ if(BUILD_SERVER)
 	endif()
 	if (USE_SPATIAL)
 		target_link_libraries(${PROJECT_NAME}server ${SPATIAL_LIBRARY})
+	endif()
+	if (USE_POSTGRESQL)
+		target_link_libraries(${PROJECT_NAME}server ${PostgreSQL_LIBRARIES})
 	endif()
 	if(USE_CURL)
 		target_link_libraries(

@@ -44,6 +44,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include "database-sqlite3.h"
 #include <deque>
 #include <queue>
+#if USE_POSTGRESQL
+#include "database-postgresql.h"
+#endif
 #if USE_LEVELDB
 #include "database-leveldb.h"
 #endif
@@ -3351,6 +3354,10 @@ Database *ServerMap::createDatabase(const std::string &name, const std::string &
 	#if USE_REDIS
 	else if (name == "redis")
 		return new Database_Redis(conf);
+	#endif
+	#if USE_POSTGRESQL
+	else if (name == "postgresql")
+		return new Database_PostgreSQL(conf);
 	#endif
 	else
 		throw BaseException(std::string("Database backend ") + name + " not supported.");

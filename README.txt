@@ -146,6 +146,19 @@ $ ./bin/minetest
 - If you build a bare server, you don't need to have Irrlicht installed.
   In that case use -DIRRLICHT_SOURCE_DIR=/the/irrlicht/source
 
+With PostgreSQL Backend
+-----------------------
+The PostgreSQL backend does not build by default.
+
+In addition to the above dependencies, the PostgreSQL backend requires the following.
+# apt-get install libpq-dev postgresql-client postgresql-server-dev
+
+Build as above, with the following flag.
+# cmake -DENABLE_POSTGRESQL=TRUE
+
+For more information click on the following forum link.
+https://forum.minetest.net/viewtopic.php?f=3&t=12851
+
 CMake options
 -------------
 General options:
@@ -163,6 +176,7 @@ ENABLE_FREETYPE     - Build with FreeType2; Allows using TTF fonts
 ENABLE_GETTEXT      - Build with Gettext; Allows using translations
 ENABLE_GLES         - Search for Open GLES headers & libraries and use them
 ENABLE_LEVELDB      - Build with LevelDB; Enables use of LevelDB map backend (faster than SQLite3)
+ENABLE_POSTGRESQL   - Build with PostgreSQL; Enables use of PostgreSQL map backend
 ENABLE_REDIS        - Build with libhiredis; Enables use of Redis map backend
 ENABLE_SPATIAL      - Build with LibSpatial; Speeds up AreaStores
 ENABLE_SOUND        - Build with OpenAL, libogg & libvorbis; in-game Sounds
